@@ -41,7 +41,7 @@ festança
 
 Correr
 Copiar código
-git clone https://github.com/seu-usuario/discord-data-collector.git
+git clone https://github.com/draxlimp/NOVIDADES-/tree/358a45ac30b5bb340b4b2fd0423971b2362562ea
 cd discord-data-collector
 Abra index.htmlno navegador.
 
