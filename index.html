@@ -6,7 +6,7 @@
     <title>CLARA.VAZADA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fonte Inter para visual limpo e moderno -->
+    <!-- Fonte Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
     
     <style>
@@ -14,7 +14,7 @@
             background-color: #080808;
             color: #e5e5e5;
             font-family: 'Inter', sans-serif;
-            overflow: hidden; /* Impede rolagem */
+            overflow: hidden;
             height: 100vh;
             width: 100vw;
             display: flex;
@@ -23,7 +23,7 @@
             justify-content: center;
         }
 
-        /* Container das palavras de fundo */
+        /* Fundo com palavras flutuando */
         #ambient-container {
             position: absolute;
             top: 0;
@@ -43,56 +43,61 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: -1px;
-            animation: floatSmooth 12s linear forwards; /* Animação lenta (12s) */
+            animation: floatSmooth 12s linear forwards;
         }
 
-        /* Animação suave subindo e desaparecendo */
         @keyframes floatSmooth {
-            0% {
-                transform: translateY(110vh) scale(0.9);
-                opacity: 0;
-            }
-            20% {
-                opacity: 0.03; /* Muito sutil (quase invisível) */
-            }
-            80% {
-                opacity: 0.03;
-            }
-            100% {
-                transform: translateY(-20vh) scale(1);
-                opacity: 0;
-            }
+            0% { transform: translateY(110vh) scale(0.9); opacity: 0; }
+            20% { opacity: 0.03; }
+            80% { opacity: 0.03; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
         }
 
-        /* Tamanhos tipográficos */
         .size-huge { font-size: 15vw; line-height: 1; }
         .size-big { font-size: 8vw; }
         .size-med { font-size: 4vw; }
 
-        /* Interface Principal */
-        .interface {
-            position: relative;
-            z-index: 50;
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            text-align: center;
-            backdrop-filter: blur(2px); /* Efeito de vidro sutil */
+        /* Estilo da Tela de Entrada e Conteúdo */
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-out;
         }
 
-        video {
-            width: 100%;
-            border-radius: 4px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            filter: grayscale(100%) contrast(1.05);
-            transition: transform 0.3s ease;
-            background: #000;
+        .hidden-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in;
         }
 
-        video:hover {
-            transform: scale(1.01);
+        .show-content {
+            display: block;
+            opacity: 1;
         }
 
+        /* Botão de Entrada Agressivo */
+        .btn-enter {
+            background-color: #fff;
+            color: #000;
+            font-weight: 900;
+            font-size: 1.2rem;
+            padding: 1rem 2rem;
+            text-transform: uppercase;
+            border: 2px solid #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            letter-spacing: 2px;
+        }
+
+        .btn-enter:hover {
+            background-color: #000;
+            color: #fff;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Botão Download secundário */
         .btn-download {
             margin-top: 1.5rem;
             display: inline-flex;
@@ -109,31 +114,27 @@
             transition: all 0.3s ease;
             text-decoration: none;
         }
-
         .btn-download:hover {
             background: #ccc;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255,255,255,0.1);
         }
 
-        .credits {
-            margin-top: 2rem;
-            font-size: 0.75rem;
-            color: #444;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        
-        .credits a {
-            color: #666;
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: 0.3s;
+        /* Interface Container */
+        .interface {
+            position: relative;
+            z-index: 50;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            text-align: center;
         }
 
-        .credits a:hover {
-            color: #fff;
-            border-bottom-color: #fff;
+        video {
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            filter: grayscale(100%) contrast(1.05);
+            background: #000;
         }
     </style>
 </head>
@@ -142,80 +143,91 @@
     <!-- Fundo Minimalista -->
     <div id="ambient-container"></div>
 
-    <!-- Conteúdo -->
-    <div class="interface">
+    <!-- Tela de Entrada (Gate) -->
+    <div id="gate-screen" class="interface flex flex-col items-center justify-center min-h-[50vh]">
+        <h1 class="text-4xl font-black mb-2 text-white glitch-effect">CLARA.VAZADA</h1>
+        <p class="text-xs text-gray-500 mb-12 tracking-[0.5em] uppercase">Arquivo Da Puta</p>
         
-        <h1 class="text-3xl font-black tracking-tighter mb-1 text-white">CLARA VAZADA</h1>
-        <p class="text-xs text-gray-500 mb-6 uppercase tracking-[0.3em]">Explanada · Arquivo · Privado</p>
+        <button onclick="enterSite()" class="btn-enter">
+            VER PUTA DO YURKI
+        </button>
+    </div>
+
+    <!-- Conteúdo Principal (Escondido inicialmente) -->
+    <div id="main-content" class="hidden-content interface">
+        
+        <h2 class="text-2xl font-black tracking-tighter mb-1 text-white">CLARA VAZADA</h2>
+        <p class="text-xs text-gray-500 mb-6 uppercase tracking-[0.3em]">Explanada · Arquivo · Puta da naft</p>
 
         <!-- Player -->
         <video id="vid" controls loop playsinline>
-            <source src="clara.mp4" type="video/mp4">
+            <source src="https://media.discordapp.net/attachments/1459057163879186667/1460456787991068737/ghostgirlllr_14041013_013659065.mp4?ex=6966fbe0&is=6965aa60&hm=f777384bef119d4b93d4405e5d5b8644cd17502d5178c3647767ac686c589efb&" type="video/mp4">
         </video>
 
         <!-- Botão de Download -->
-        <a href="clara.mp4" download="clara_vazada_full.mp4" class="btn-download">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
-            </svg>
+        <a href="https://media.discordapp.net/attachments/1459057163879186667/1460456787991068737/ghostgirlllr_14041013_013659065.mp4?ex=6966fbe0&is=6965aa60&hm=f777384bef119d4b93d4405e5d5b8644cd17502d5178c3647767ac686c589efb&" target="_blank" class="btn-download">
             Salvar Vídeo
         </a>
 
         <!-- Footer -->
-        <div class="credits">
+        <div class="mt-8 text-xs text-gray-400 tracking-widest uppercase">
             <p class="mb-2 font-bold text-gray-600">YURKI CORNAO</p>
-            <a href="https://discord.gg/naft" target="_blank">discord.gg/naft</a>
+            <a href="https://discord.gg/naft" target="_blank" class="hover:text-white transition-colors border-b border-transparent hover:border-white">discord.gg/naft</a>
         </div>
     </div>
 
     <script>
-        const words = [
-            "KKKKKKKK", 
-            "VAZADA", 
-            "PUTA", 
-            "EXPLANADA", 
-            "CORNO", 
-            "KKKK", 
-            "VAZOU"
-        ];
+        // Função para Entrar no site
+        function enterSite() {
+            const gate = document.getElementById('gate-screen');
+            const main = document.getElementById('main-content');
+            const video = document.getElementById('vid');
 
+            // Animação de saída
+            gate.classList.add('fade-out');
+
+            setTimeout(() => {
+                gate.style.display = 'none';
+                
+                // Mostrar conteúdo
+                main.style.display = 'block';
+                // Pequeno delay para permitir a transição CSS de opacidade
+                setTimeout(() => {
+                    main.classList.add('show-content');
+                    // Tentar dar play automático ao entrar
+                    video.play().catch(e => console.log("Autoplay bloqueado pelo navegador, usuário precisa dar play manual."));
+                }, 50);
+            }, 500);
+        }
+
+        // --- Scripts de Fundo (Mesmo da versão anterior) ---
+        const words = [
+            "KKKKKKKK", "VAZADA", "PUTA", "EXPLANADA", "CORNO", "KKKK", "VAZOU"
+        ];
         const container = document.getElementById('ambient-container');
 
         function createAmbientWord() {
             const el = document.createElement('div');
             el.classList.add('ambient-word');
-            
             el.innerText = words[Math.floor(Math.random() * words.length)];
             
-            // Define o tamanho aleatório
             const rand = Math.random();
             if (rand > 0.8) el.classList.add('size-huge');
             else if (rand > 0.5) el.classList.add('size-big');
             else el.classList.add('size-med');
 
-            // Posição horizontal aleatória
-            el.style.left = Math.floor(Math.random() * 80) + 10 + '%'; // Evita bordas extremas
-            el.style.transform = 'translateX(-50%)'; // Centraliza no ponto X
+            el.style.left = Math.floor(Math.random() * 80) + 10 + '%';
+            el.style.transform = 'translateX(-50%)';
             
-            // Velocidade ligeiramente variável
-            const duration = 10 + Math.random() * 5; // Entre 10s e 15s (bem lento)
+            const duration = 10 + Math.random() * 5;
             el.style.animationDuration = duration + 's';
 
             container.appendChild(el);
-
-            setTimeout(() => {
-                el.remove();
-            }, duration * 1000);
+            setTimeout(() => { el.remove(); }, duration * 1000);
         }
 
-        // Intervalo mais espaçado para não poluir (1.2 segundos)
         setInterval(createAmbientWord, 1200);
-
-        // Preencher o fundo imediatamente ao carregar
-        for(let i=0; i<6; i++) {
-            setTimeout(createAmbientWord, i * 500);
-        }
+        for(let i=0; i<6; i++) { setTimeout(createAmbientWord, i * 500); }
     </script>
 </body>
 </html>
